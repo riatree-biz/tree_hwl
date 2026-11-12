@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>개발 및 배포 작업일지 관리 시스템 (Local Offline)</title>
+  <link rel="stylesheet" href="./design.css" />
+</head>
+<body>
+
+  <!-- 상단 헤더 -->
+  <header class="app-header">
+    <div class="app-header__inner">
+      <div class="app-header__title-group">
+        <h1>개발 및 배포 작업일지</h1>
+        <span class="badge-offline">● LOCAL DOM / HTML SAVE MODE</span>
+      </div>
+      <div class="app-header__actions">
+ 	  <button type="button" class="btn btn--secondary" id="btnExportCsv">CSV 내보내기</button>
+ 	  <button type="button" class="btn btn--success" id="btnSaveDataJson">data.json 저장 (파일 갱신)</button>
+	  <button type="button" class="btn btn--primary" id="btnOpenNew">+ 새 작업 등록</button>
+	</div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- 요약 KPI 카드 -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <span class="kpi-card__label">전체 등록 건수</span>
+        <span class="kpi-card__value kpi-card__value--primary" id="kpiTotal">2</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-card__label">배포 대기 (개발중/완료)</span>
+        <span class="kpi-card__value kpi-card__value--warning" id="kpiPending">1</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-card__label">배포 완료 리스트</span>
+        <span class="kpi-card__value kpi-card__value--success" id="kpiDeployed">1</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-card__label">등록 병원 수</span>
+        <span class="kpi-card__value" id="kpiHospitals">2</span>
+      </div>
+    </section>
+
+    <!-- 작업 테이블 워크스페이스 -->
+    <section class="workspace-card">
+      <div class="toolbar">
+        <!-- 탭 전환: 전체 / 배포 대기 / 배포 완료 리스트 -->
+        <div class="tabs" role="tablist">
+          <button type="button" class="tab-btn is-active" data-tab="all">
+            전체 내역 <span class="count-pill" id="tabCountAll">2</span>
+          </button>
+          <button type="button" class="tab-btn" data-tab="pending">
+            배포 대기 <span class="count-pill" id="tabCountPending">1</span>
+          </button>
+          <button type="button" class="tab-btn" data-tab="deployed">
+            배포 완료 리스트 <span class="count-pill" id="tabCountDeployed">1</span>
+          </button>
+        </div>
+
+        <!-- 검색 및 필터 -->
+        <div class="filters">
+          <select id="filterHospital">
+            <option value="">전체 병원</option>
+          </select>
+          <select id="filterCategory">
+            <option value="">전체 구분</option>
+            <option value="DB">DB</option>
+            <option value="FE">FE</option>
+            <option value="BE">BE</option>
+            <option value="INFRA">INFRA</option>
+            <option value="ETC">ETC</option>
+          </select>
+          <input type="search" id="filterSearch" placeholder="병원, 요청자, 내용, 변경소스 검색..." />
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="worklog-table" id="worklogTable">
+          <thead>
+            <tr>
+              <th>인덱스</th>
+              <th>상태</th>
+              <th>요청병원</th>
+              <th>요청자</th>
+              <th>구분</th>
+              <th>요청내용</th>
+              <th>개발내용</th>
+              <th>변경 소스</th>
+              <th>요청일자</th>
+              <th>개발일자</th>
+              <th>완료일자</th>
+              <th>배포일자</th>
+              <th style="text-align:right">관리</th>
+            </tr>
+          </thead>
+          <tbody id="worklogTbody">
+            <tr data-id="2" data-status="pending" data-hospital="대전성모메디컬" data-categories="FE">
+              <td class="col-idx">#002</td>
+              <td class="col-status"><span class="status-badge status-badge--pending">배포대기</span></td>
+              <td class="col-hospital">대전성모메디컬</td>
+              <td class="col-requester">간호부 최수진 수간호사</td>
+              <td class="col-categories"><div class="tag-list"><span class="tag-badge tag-badge--FE">FE</span></div></td>
+              <td class="col-text col-req-content">병동 투약 처방 조회 화면에서 고위험 약물 강조 배지 표시 요청</td>
+              <td class="col-text col-dev-content">처방 그리드 컴포넌트 내 약품등급 코드(HIGH_ALERT) 분기 렌더링 및 툴팁 추가</td>
+              <td class="col-source"><div class="source-box">src/views/nurse/MedicationGrid.vue
+src/styles/badge.scss</div></td>
+              <td class="col-dates col-req-date">2026-11-10</td>
+              <td class="col-dates col-dev-date">2026-11-11</td>
+              <td class="col-dates col-comp-date">2026-11-12</td>
+              <td class="col-dates col-deploy-date">-</td>
+              <td class="col-actions">
+                <button type="button" class="btn btn--success btn--sm" data-action="deploy">배포완료</button>
+                <button type="button" class="btn btn--secondary btn--sm" data-action="edit">수정</button>
+                <button type="button" class="btn btn--danger-ghost btn--sm" data-action="delete">삭제</button>
+              </td>
+            </tr>
+            <tr data-id="1" data-status="deployed" data-hospital="서울중앙병원" data-categories="BE,DB">
+              <td class="col-idx">#001</td>
+              <td class="col-status"><span class="status-badge status-badge--deployed">배포완료</span></td>
+              <td class="col-hospital">서울중앙병원</td>
+              <td class="col-requester">원무팀 박지훈 파트장</td>
+              <td class="col-categories"><div class="tag-list"><span class="tag-badge tag-badge--BE">BE</span><span class="tag-badge tag-badge--DB">DB</span></div></td>
+              <td class="col-text col-req-content">외래 수납 영수증 재발행 시 선택진료비 항목 합산 오류 수정 요청</td>
+              <td class="col-text col-dev-content">영수증 집계 프로시저 내 비급여 코드 필터 조건 보완 및 API 응답 DTO 매핑 수정</td>
+              <td class="col-source"><div class="source-box">PROC_RPT_RECEIPT_SUM.sql
+src/main/java/his/billing/ReceiptService.java</div></td>
+              <td class="col-dates col-req-date">2026-11-05</td>
+              <td class="col-dates col-dev-date">2026-11-06</td>
+              <td class="col-dates col-comp-date">2026-11-06</td>
+              <td class="col-dates col-deploy-date" style="color:var(--success);font-weight:700;">2026-11-07</td>
+              <td class="col-actions">
+                <button type="button" class="btn btn--secondary btn--sm" data-action="edit">수정</button>
+                <button type="button" class="btn btn--danger-ghost btn--sm" data-action="delete">삭제</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="empty-state" id="emptyState" style="display:none">
+        <p>조건에 해당하는 작업 내역이 없습니다.</p>
+        <button type="button" class="btn btn--primary" id="btnEmptyNew">+ 첫 작업 등록하기</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- 작업 등록 / 수정 모달 -->
+  <div class="modal-backdrop" id="formModalBackdrop">
+    <div class="modal">
+      <div class="modal__header">
+        <h2 id="modalTitle">새 작업 등록</h2>
+        <button type="button" class="btn btn--secondary btn--sm" id="btnCloseModal">닫기</button>
+      </div>
+      <form id="worklogForm">
+        <div class="modal__body">
+          <input type="hidden" id="fieldId" />
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>인덱스 (자동 부여)</label>
+              <input type="text" id="fieldIndexDisplay" readonly style="background:#f1f5f9; font-family:var(--font-mono); font-weight:700;" />
+            </div>
+            <div class="form-group">
+              <label>구분 (중복 선택 가능) <span class="req">*</span></label>
+              <div class="checkbox-group" id="categoryGroup">
+                <label class="check-pill"><input type="checkbox" name="category" value="DB" /> DB</label>
+                <label class="check-pill"><input type="checkbox" name="category" value="FE" /> FE</label>
+                <label class="check-pill"><input type="checkbox" name="category" value="BE" /> BE</label>
+                <label class="check-pill"><input type="checkbox" name="category" value="INFRA" /> INFRA</label>
+                <label class="check-pill"><input type="checkbox" name="category" value="ETC" /> ETC</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="fieldHospital">요청병원 <span class="req">*</span></label>
+              <input type="text" id="fieldHospital" list="hospitalDatalist" required placeholder="예: 서울중앙병원" />
+              <datalist id="hospitalDatalist"></datalist>
+            </div>
+            <div class="form-group">
+              <label for="fieldRequester">요청자 <span class="req">*</span></label>
+              <input type="text" id="fieldRequester" required placeholder="예: 원무과 김철수 팀장" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="fieldRequestContent">요청내용 <span class="req">*</span></label>
+            <textarea id="fieldRequestContent" required placeholder="병원에서 요청한 장애 수정 또는 기능 개선 사항을 입력하세요."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="fieldDevContent">개발내용</label>
+            <textarea id="fieldDevContent" placeholder="실제 구현 및 수정한 로직, 쿼리 변경 요약 등을 입력하세요."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="fieldChangedSource">변경 소스 (파일명 / 테이블 / API 경로 등)</label>
+            <textarea id="fieldChangedSource" class="mono" placeholder="예:&#10;src/api/OrderController.java (line 142)&#10;PROC_GET_PATIENT_LIST.sql"></textarea>
+          </div>
+
+          <div class="form-grid form-grid--4">
+            <div class="form-group">
+              <label for="fieldRequestDate">요청일자 <span class="req">*</span></label>
+              <input type="date" id="fieldRequestDate" required />
+            </div>
+            <div class="form-group">
+              <label for="fieldDevDate">개발일자</label>
+              <input type="date" id="fieldDevDate" />
+            </div>
+            <div class="form-group">
+              <label for="fieldCompleteDate">완료일자</label>
+              <input type="date" id="fieldCompleteDate" />
+            </div>
+            <div class="form-group">
+              <label for="fieldDeployDate">배포일자 (입력 시 배포완료)</label>
+              <input type="date" id="fieldDeployDate" />
+            </div>
+          </div>
+        </div>
+        <div class="modal__footer">
+          <button type="button" class="btn btn--secondary" id="btnCancelModal">취소</button>
+          <button type="submit" class="btn btn--primary">화면에 반영</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 알림 토스트 -->
+  <div class="toast-banner" id="toastBanner"></div>
+
+  <!-- 배포 처리 및 DOM 기반 HTML 저장 로직 -->
+  <script src="./deploy.js"></script>
+</body>
+</html>
