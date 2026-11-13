@@ -1,35 +1,38 @@
-[
-  {
-    "id": 1,
-    "status": "pending",
-    "hospital": "중앙보훈",
-    "requester": "김윤희",
-    "categories": [
-      "INFRA",
-      "ETC"
-    ],
-    "requestContent": "test",
-    "devContent": "test",
-    "changedSource": "test",
-    "requestDate": "2026-11-12",
-    "devDate": "",
-    "completeDate": "",
-    "deployDate": ""
-  },
-  {
-    "id": 2,
-    "status": "pending",
-    "hospital": "대전보훈",
-    "requester": "test",
-    "categories": [
-      "DB"
-    ],
-    "requestContent": "test",
-    "devContent": "test",
-    "changedSource": "test",
-    "requestDate": "2026-11-12",
-    "devDate": "",
-    "completeDate": "",
-    "deployDate": ""
-  }
-]
+{
+  "inquiries": [],
+  "deployments": [
+    {
+      "id": 1,
+      "status": "pending",
+      "hospital": "중앙보훈",
+      "requester": "김윤희",
+      "categories": [
+        "INFRA",
+        "ETC"
+      ],
+      "requestContent": "test",
+      "devContent": "test",
+      "changedSource": "test",
+      "requestDate": "2026-11-12",
+      "devDate": "",
+      "completeDate": "",
+      "deployDate": ""
+    },
+    {
+      "id": 2,
+      "status": "pending",
+      "hospital": "대전보훈",
+      "requester": "test",
+      "categories": [
+        "DB"
+      ],
+      "requestContent": "test",
+      "devContent": "test",
+      "changedSource": "test",
+      "requestDate": "2026-11-12",
+      "devDate": "",
+      "completeDate": "",
+      "deployDate": ""
+    }
+  ]
+}
