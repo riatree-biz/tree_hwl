@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>THWL</title>
+    <link rel="stylesheet" href="../design/design.css">
+</head>
+<body>
+    <!-- 공통 헤더: 주요 업무 화면 이동 및 JSON 파일 작업 메뉴 -->
+<header class="app-header">
+    <div class="header-inner">
+        <div class="brand">
+            <h1>개발 반영 체크리스트</h1>
+            <!-- <span class="badge">RELEASE CHECKLIST</span> -->
+        </div>
+
+        <nav>
+            <a href="../index.html">대시보드</a>
+            <a href="../pages/SaveInquiry.html">문의 관리</a>
+            <a href="../pages/SaveDeploy.html">개발·배포 관리</a>
+            <a href="../pages/SaveDataRequest.html">데이터 처리 요청</a>
+            <a class="active" href="../pages/SaveCheckList.html">체크리스트</a>
+            <a href="../pages/SaveSetting.html">JSON 설정</a>
+        </nav>
+
+        <div class="actions">
+            <!-- <button class="btn secondary" data-load-json="checklists">JSON 불러오기</button>
+            <input type="file" accept=".json,application/json" data-json-input="checklists" hidden>
+            <button class="btn secondary" data-connect-json="checklists">JSON 파일 연결</button>
+            <button class="btn secondary" data-save-json="checklists">JSON 저장</button>
+            <button class="btn secondary" data-save-html>오늘 날짜 HTML 저장</button> -->
+            <button class="btn primary" id="addChecklist">+ 체크리스트 등록</button>
+        </div>
+    </div>
+</header>
+
+    <main class="container">
+        <!-- 화면 제목과 체크리스트 상태별 건수 -->
+        <section class="page-intro">
+            <div>
+                <p class="eyebrow">RELEASE READINESS</p>
+                <h2>개발 및 배포 체크 항목</h2>
+                <p>항목별 일정과 개발기·스테이징·운영기 반영 여부를 관리합니다.</p>
+            </div>
+        </section>
+
+        <section class="kpis">
+            <div class="kpi"><small>전체 체크 항목</small><strong id="cTotal">0</strong></div>
+            <div class="kpi"><small>전체 반영 완료</small><strong class="success" id="cDone">0</strong></div>
+            <div class="kpi"><small>일부 반영</small><strong class="warning" id="cPartial">0</strong></div>
+            <div class="kpi"><small>미반영</small><strong id="cPending">0</strong></div>
+        </section>
+
+        <!-- 검색·상태 필터와 체크리스트 목록 -->
+        <section class="panel">
+            <div class="toolbar">
+                <div class="filters">
+                    <input id="cSearch" type="search" placeholder="체크 항목 검색">
+                    <select id="cFilter">
+                        <option value="all">전체 상태</option>
+                        <option value="done">전체 반영 완료</option>
+                        <option value="partial">일부 반영</option>
+                        <option value="pending">미반영</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>체크 항목</th>
+                            <th>시작일</th>
+                            <th>종료일</th>
+                            <th>반영일</th>
+                            <th>개발기</th>
+                            <th>스테이징</th>
+                            <th>운영기</th>
+                            <th>첨부 이미지</th>
+                            <th>상태</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cRows"></tbody>
+                </table>
+            </div>
+            <div class="empty" id="cEmpty" hidden>등록된 체크리스트가 없습니다.</div>
+        </section>
+    </main>
+
+    <!-- 등록/수정 모달: 제목과 하단 버튼은 고정하고 modal-body만 스크롤됩니다. -->
+    <div class="backdrop" id="cModal">
+        <form class="modal" id="cForm">
+            <div class="modal-head">
+                <h2 id="cModalTitle">체크리스트 등록</h2>
+                <button type="button" class="btn secondary small" id="cClose">닫기</button>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="cId">
+
+                <label>
+                    체크 항목 *
+                    <textarea id="cTitle" required rows="3" placeholder="개발 또는 배포 시 확인할 내용을 입력하세요."></textarea>
+                </label>
+
+                <div class="form-grid three">
+                    <label>시작일<input type="date" id="cStart"></label>
+                    <label>종료일<input type="date" id="cEnd"></label>
+                    <label>반영일<input type="date" id="cRelease"></label>
+                </div>
+
+                <fieldset>
+                    <legend>환경별 반영 여부</legend>
+                    <div class="checks">
+                        <label class="check"><input type="checkbox" id="cDev"> 개발기 반영</label>
+                        <label class="check"><input type="checkbox" id="cStage"> 스테이징 반영</label>
+                        <label class="check"><input type="checkbox" id="cProd"> 운영기 반영</label>
+                    </div>
+                </fieldset>
+
+                <!-- 첨부 이미지가 여러 장이어도 모달 본문 내부에서 스크롤됩니다. -->
+                <fieldset>
+                    <legend>항목별 이미지 첨부</legend>
+                    <label>
+                        이미지 파일
+                        <input type="file" id="cImages" accept="image/*" multiple>
+                    </label>
+                    <small class="muted">
+                        선택한 체크리스트 항목에 이미지가 개별 저장됩니다.
+                        이미지당 최대 1.5MB, 항목당 최대 5장입니다.
+                    </small>
+                    <div id="cImagePreview" class="checklist-image-preview"></div>
+                </fieldset>
+
+                <label>
+                    비고
+                    <textarea id="cMemo" rows="2" placeholder="담당자, 확인 사항 등을 기록"></textarea>
+                </label>
+            </div>
+
+            <div class="modal-foot">
+                <button type="button" class="btn secondary" id="cCancel">취소</button>
+                <button type="submit" class="btn primary">저장</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="toast" id="cToast"></div>
+
+    <!-- 공통 저장 기능을 먼저 로드한 뒤 체크리스트 화면 로직을 실행합니다. -->
+    <script src="../biz/common.js"></script>
+    <script src="../biz/SaveCheckList.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+[
+  {
+    "id": "DR-1795585828383",
+    "hospital": "대구보훈병원",
+    "requester": "서점교 부장",
+    "requestType": "데이터 정정",
+    "requestDate": "2026-11-25",
+    "assignee": "김근오",
+    "status": "done",
+    "completedAt": "2026-11-25",
+    "requestContent": "· 변경요청 : \n1. 재활 대분류 코드명 변경 (운동치료 → 물리치료)\n2. 치료실정보 : 외래열전기치료실 → 열전기치료실",
+    "resultContent": "-- 재활처방 대분류코드 변경\nUPDATE CCCMCSTE A SET A.COMN_CD_NM = '물리치료' WHERE A.HSP_TP_CD = '07' AND COMN_GRP_CD = 'RHB' AND COMN_CD = '01';\n\n-- 치료실정보\nUPDATE MSTRHSRD A SET A.TYRM_NM = '열전기치료실' WHERE A.HSP_TP_CD = '07' AND A.TRP_DUTY_TP_CD = 'R' AND A.TYRM_CD = 'RM01';",
+    "images": [],
+    "createdAt": "2026-11-25T05:50:28.384Z",
+    "updatedAt": "2026-11-25T05:50:28.384Z"
+  },
+  {
+    "id": "DR-1795579942772",
+    "hospital": "대전보훈병원",
+    "requester": "한소원 사원",
+    "requestType": "데이터 정정",
+    "requestDate": "2026-11-23",
+    "assignee": "김근오",
+    "status": "done",
+    "completedAt": "2026-11-23",
+    "requestContent": "· 요청내용 : 의무기록사본발급표지 연락처 정보 수정\n· 변경정보 : 042-939-0450 → 042-939-0337",
+    "resultContent": "UPDATE CCCMCSTE SET COMN_CD_NM = '042-939-0337' WHERE HSP_TP_CD = '08' AND A.COMN_GRP_CD = 'RDO104' AND A.COMN_CD = '30';",
+    "images": [],
+    "createdAt": "2026-11-25T04:12:22.772Z",
+    "updatedAt": "2026-11-25T04:13:49.591Z"
+  },
+  {
+    "id": "DR-1795579836036",
+    "hospital": "광주보훈병원",
+    "requester": "정은옥 과장",
+    "requestType": "데이터 정정",
+    "requestDate": "2026-11-20",
+    "assignee": "김근오",
+    "status": "done",
+    "completedAt": "2026-11-23",
+    "requestContent": "· 요청내용 : 사본발급 표지 연락처 정보 수정\n· 정보 : 062-602-6340 → 062-602-6342",
+    "resultContent": "UPDATE CCCMCSTE SET COMN_CD_NM = '062-602-6342' WHERE HSP_TP_CD = '05' AND A.COMN_GRP_CD = 'RDO104' AND A.COMN_CD = '30';",
+    "images": [],
+    "createdAt": "2026-11-25T04:10:36.036Z",
+    "updatedAt": "2026-11-25T04:10:36.036Z"
+  },
+  {
+    "id": "DR-1795576070912",
+    "hospital": "대구보훈병원",
+    "requester": "서점교 부장",
+    "requestType": "데이터 등록",
+    "requestDate": "2026-11-25",
+    "assignee": "김근오",
+    "status": "done",
+    "completedAt": "2026-11-25",
+    "requestContent": "· 화면명 : 재활처방코드관리\n· 요청내용 : 신규처방코드 등록요청",
+    "resultContent": "CRH1000066\tFZ02100\t        신장분사치료(1일당)\nCRH2000019\tHZUR01602\t체외골반자기장치료(배뇨통및골반통증)\nCRH2000020\tHZUR01603\t체외골반자기장치료 [요실금] [1일당]\nCRH2000021\tHZUR01601\t체외골반자기장치료(발기능.사정력강화,전립선동통)\n\nSELECT * FROM MSTRHCDC A WHERE A.HSP_TP_CD = '07' AND A.RHTR_ORD_CD IN ('CRH2000019', 'CRH2000020', 'CRH2000021','CRH1000066');",
+    "images": [],
+    "createdAt": "2026-11-25T03:07:50.912Z",
+    "updatedAt": "2026-11-25T04:11:05.902Z"
+  }
+]

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>THWL</title><link rel="stylesheet" href="../design/design.css">
+</head>
+<body>
+<header class="app-header">
+    <div class="header-inner">
+        <div class="brand">
+            <h1>병원 데이터 처리 요청</h1>
+            <!-- <span class="badge">HOSPITAL REQUESTS</span> -->
+        </div>
+        <nav>
+            <a href="../index.html">대시보드</a>
+            <a href="../pages/SaveInquiry.html">문의 관리</a>
+            <a href="../pages/SaveDeploy.html">개발·배포 관리</a>
+            <a class="active" href="../pages/SaveDataRequest.html">데이터 처리 요청</a>
+            <a href="../pages/SaveCheckList.html">체크리스트</a>
+            <a href="../pages/SaveSetting.html">JSON 설정</a>
+        </nav>
+        
+        <div class="actions">
+            <button class="btn secondary" data-save-html>오늘 날짜 HTML 저장</button>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+    <section class="page-intro">
+        <div>
+            <p class="eyebrow">HOSPITAL DATA OPERATIONS</p>
+            <h2>병원 사용자 데이터 처리 요청</h2>
+            <p>병원에서 접수한 데이터 추출·정정·삭제·등록 등의 요청을 접수부터 처리 완료까지 관리합니다.</p>
+        </div>
+        
+        <button class="btn primary" id="addRequest">+ 처리 요청 등록</button>
+    </section>
+    
+    <section class="kpis">
+        <div class="kpi"><small>전체 요청</small><strong id="requestTotal">0</strong></div>
+        <div class="kpi"><small>접수·처리 대기</small><strong class="warning" id="requestPending">0</strong></div>
+        <div class="kpi"><small>처리 중</small><strong id="requestWorking">0</strong></div>
+        <div class="kpi"><small>처리 완료</small><strong class="success" id="requestDone">0</strong></div>
+    </section>
+    
+    <section class="panel">
+        <div class="toolbar"><div class="filters"><input id="requestSearch" type="search" placeholder="병원명, 요청자, 요청 내용 검색"><select id="statusFilter"><option value="all">전체 상태</option><option value="received">접수</option><option value="working">처리 중</option><option value="done">완료</option><option value="hold">보류</option></select><select id="typeFilter"><option value="all">전체 유형</option><option>데이터 추출</option><option>데이터 정정</option><option>데이터 삭제</option><option>데이터 등록</option><option>기타</option></select></div>
+            <div class="actions"><button class="btn secondary" data-load-json="dataRequests">JSON 불러오기</button><input type="file" accept=".json,application/json" data-json-input="dataRequests" hidden><button class="btn secondary" data-save-json="dataRequests">JSON 저장</button></div></div>
+        <div class="table-wrap"><table><thead><tr><th>접수번호</th><th>병원 / 요청자</th><th>요청 유형</th><th>요청 내용</th><th>접수일</th><th>처리 담당</th><th>상태</th><th>처리일</th><th>첨부 이미지</th><th>관리</th></tr></thead><tbody id="requestRows"></tbody></table></div>
+        <div class="empty" id="emptyRequests" hidden>등록된 데이터 처리 요청이 없습니다.</div>
+    </section>
+    
+    <section class="notice">
+        <strong>관리 기준</strong>
+        <p>병원 사용자가 요청한 건을 기준으로 접수일, 요청 내용, 처리 담당자, 처리 결과와 완료 시점을 기록합니다. 상태 변경 이력과 최종 수정 시각은 각 요청 데이터에 함께 저장됩니다.</p>
+    </section>
+</main>
+
+<div class="backdrop" id="requestModal"><form class="modal" id="requestForm">
+    <div class="modal-head">
+        <h2 id="modalTitle">데이터 처리 요청 등록</h2>
+        <button type="button" class="btn secondary" id="closeModal">닫기</button>
+    </div>
+    
+    <div class="modal-body">
+        <input type="hidden" id="requestId">
+        
+        <div class="form-grid">
+            <label>병원명 *<input class="control-input" id="hospital" required></label>
+            <label>요청자 *<input class="control-input" id="requester" required></label>
+            <label>요청 유형 *
+                <select class="control-input" id="requestType">
+                    <option>데이터 추출</option>
+                    <option>데이터 정정</option>
+                    <option>데이터 삭제</option>
+                    <option>데이터 등록</option>
+                    <option>기타</option>
+                </select>
+            </label>
+            <label>접수일 *<input class="control-input" id="requestDate" type="date" required></label>
+            <label>처리 담당자<input class="control-input" id="assignee"></label>
+            <label>상태
+                <select class="control-input" id="requestStatus">
+                    <option value="received">접수</option>
+                    <option value="working">처리 중</option>
+                    <option value="done">완료</option>
+                    <option value="hold">보류</option>
+                </select>
+            </label>
+            <label>처리 완료일<input class="control-input" id="completedAt" type="date"></label></div>
+            <label>요청 상세 내용 *<textarea class="control-input" id="requestContent" rows="4" required></textarea></label>
+            <label>처리 결과 및 메모<textarea class="control-input" id="resultContent" rows="4" placeholder="처리 결과, 전달 사항, 보류 사유 등을 기록"></textarea></label>
+        <fieldset>
+            <legend>요청별 이미지 첨부</legend>
+            <label>이미지 파일<input type="file" id="requestImages" accept="image/*" multiple></label>
+            <small class="muted">현재 요청 항목에 개별 첨부됩니다. 이미지당 최대 1.5MB, 항목당 최대 5장입니다.</small>
+            <div id="requestImagePreview" class="checklist-image-preview"></div>
+        </fieldset>
+    </div>
+    
+    <div class="modal-foot">
+        <button type="button" class="btn secondary" id="cancelModal">취소</button>
+        <button class="btn primary" type="submit">저장</button>
+    </div>
+</form>
+</div>
+<div class="toast" id="requestToast"></div>
+<script src="../biz/common.js"></script>
+<script src="../biz/SaveDataRequest.js"></script>
+</body></html>

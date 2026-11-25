@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>THWL</title>
+    <link rel="stylesheet" href="../design/design.css">
+</head>
+
+<body>
+    <header class="app-header">
+        <div class="header-inner">
+            <div class="brand">
+                <h1>JSON 파일 설정</h1>
+                <!-- <span class="badge">STORAGE SETTINGS</span> -->
+            </div>
+            <nav>
+                <a href="../index.html">대시보드</a>
+                <a href="../pages/SaveInquiry.html">문의 관리</a>
+                <a href="../pages/SaveDeploy.html">개발·배포 관리</a>
+                <a href="../pages/SaveDataRequest.html">데이터 처리 요청</a>
+                <a href="../pages/SaveCheckList.html">체크리스트</a>
+                <a class="active" href="../pages/SaveSetting.html">JSON 설정</a>
+            </nav>
+            <div class="actions">
+                <button class="btn secondary" data-save-html>오늘 날짜 HTML 저장</button>
+            </div>
+        </div>
+    </header>
+    <main class="container">
+        <section class="page-intro">
+            <div>
+                <p class="eyebrow">JSON STORAGE CONTROL</p>
+                <h2>데이터 파일 연결 및 관리</h2>
+                <p>업무 데이터별 JSON 파일을 불러오고, 연결 상태와 저장 시점을 관리합니다.</p>
+            </div>
+        </section>
+        <section class="kpis">
+            <div class="kpi"><small>전체 데이터</small><strong id="totalCount">0</strong></div>
+            <div class="kpi"><small>문의 데이터</small><strong id="inquiryCount">0</strong></div>
+            <div class="kpi"><small>개발·배포 데이터</small><strong id="deploymentCount">0</strong></div>
+            <div class="kpi"><small>병원 처리 요청</small><strong id="requestCount">0</strong></div>
+            <div class="kpi"><small>체크리스트</small><strong id="checklistCount">0</strong></div>
+        </section>
+        <section class="data-grid">
+            <article class="data-card">
+                <p class="eyebrow">INQUIRIES.JSON</p>
+                <h3>문의 관리 데이터</h3>
+                <p>병원 문의 및 문의 처리 내역</p>
+                <div class="data-meta"><span>파일명</span><strong>inquiries.json</strong></div>
+                <div class="data-meta"><span>데이터 건수</span><strong id="inquiriesCount">0건</strong></div>
+                <div class="data-meta"><span>파일 상태</span><strong class="file-status" id="inquiriesStatus">미연결</strong>
+                </div>
+                <div class="data-actions">
+                    <button class="btn secondary" data-connect="inquiries">파일 연결</button>
+                    <button class="btn secondary" data-import="inquiries">JSON 불러오기</button>
+                    <button class="btn primary" data-save="inquiries">저장</button>
+                    <button class="btn danger" data-disconnect="inquiries">연결 해제</button>
+                    <input type="file" accept=".json,application/json" data-file="inquiries" hidden>
+                </div>
+            </article>
+            <article class="data-card">
+                <p class="eyebrow">DEPLOYMENTS.JSON</p>
+                <h3>개발·배포 데이터</h3>
+                <p>개발 작업 및 배포 일정·변경 내역</p>
+                <div class="data-meta"><span>파일명</span><strong>deployments.json</strong></div>
+                <div class="data-meta"><span>데이터 건수</span><strong id="deploymentsCount">0건</strong></div>
+                <div class="data-meta"><span>파일 상태</span><strong class="file-status" id="deploymentsStatus">미연결</strong></div>
+                <div class="data-actions">
+                    <button class="btn secondary" data-connect="deployments">파일 연결</button>
+                    <button class="btn secondary" data-import="deployments">JSON 불러오기</button>
+                    <button class="btn primary" data-save="deployments">저장</button>
+                    <button class="btn danger" data-disconnect="deployments">연결해제</button>
+                    <input type="file" accept=".json,application/json" data-file="deployments" hidden>
+                </div>
+            </article>
+            <article class="data-card">
+                <p class="eyebrow">DATAREQUESTS.JSON</p>
+                <h3>병원 데이터 처리 요청</h3>
+                <p>병원 사용자의 데이터 추출·정정·삭제·등록 요청</p>
+                <div class="data-meta"><span>파일명</span><strong>dataRequests.json</strong></div>
+                <div class="data-meta"><span>데이터 건수</span><strong id="dataRequestsCount">0건</strong></div>
+                <div class="data-meta"><span>파일 상태</span><strong class="file-status" id="dataRequestsStatus">미연결</strong></div>
+                <div class="data-actions">
+                    <button class="btn secondary" data-connect="dataRequests">파일연결</button>
+                    <button class="btn secondary" data-import="dataRequests">JSON 불러오기</button>
+                    <button class="btn primary" data-save="dataRequests">저장</button>
+                    <button class="btn danger" data-disconnect="dataRequests">연결해제</button>
+                    <input type="file" accept=".json,application/json" data-file="dataRequests" hidden>
+                </div>
+            </article>
+            <article class="data-card">
+                <p class="eyebrow">CHECKLISTS.JSON</p>
+                <h3>개발 반영 체크리스트</h3>
+                <p>시작일·종료일·반영일과 환경별 반영 여부</p>
+                <div class="data-meta"><span>파일명</span><strong>checklists.json</strong></div>
+                <div class="data-meta"><span>데이터 건수</span><strong id="checklistsCount">0건</strong></div>
+                <div class="data-meta"><span>파일 상태</span><strong class="file-status" id="checklistsStatus">미연결</strong></div>
+                <div class="data-actions">
+                    <button class="btn secondary" data-connect="checklists">파일 연결</button>
+                    <button class="btn secondary" data-import="checklists">JSON 불러오기</button>
+                    <button class="btn primary" data-save="checklists">저장</button>
+                    <button class="btn danger" data-disconnect="checklists">연결해제</button>
+                    <input type="file" accept=".json,application/json" data-file="checklists" hidden/>
+                </div>
+            </article>
+        </section>
+        <section class="notice">
+            <strong>파일 연결 및 자동 저장</strong>
+            <p>Chrome 또는 Edge에서 localhost로 실행한 뒤 각 JSON 파일을 연결하고 읽기·쓰기 권한을 허용하면 해당 데이터가 변경될 때 연결된 파일에 자동 반영됩니다.</p>
+            <p>연결하지 않은 경우에는 브라우저 저장소에 임시 보관됩니다. JSON 불러오기는 선택한 배열 데이터로 해당 항목을 교체하므로 기존 데이터가 필요한 경우 먼저 백업해 주세요.</p>
+        </section>
+        <section class="panel" style="margin-top:16px">
+            <div class="panel-head">
+                <h2>파일별 작업 상태</h2>
+                <p id="lastMessage">저장소 상태를 확인하고 있습니다.</p>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>데이터</th>
+                            <th>파일명</th>
+                            <th>상태</th>
+                            <th>최근 작업</th>
+                        </tr>
+                    </thead>
+                    <tbody id="statusRows"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    <div class="toast" id="dataToast"></div>
+    <script src="../biz/common.js"></script>
+    <script src="../biz/SaveSetting.js"></script>
+</body>
+
+</html>

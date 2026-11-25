@@ -1,9 +1,103 @@
 <!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>업무 통합 관리</title><link rel="stylesheet" href="design.css"></head>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>THWL</title>
+    <link rel="stylesheet" href="design/design.css">
+</head>
 <body>
-<header class="app-header"><div class="header-inner"><div class="brand"><h1>업무 통합 관리</h1><span class="badge">● LOCAL WORKSPACE</span></div><nav><a class="active" href="index.html">대시보드</a><a href="inquiry.html">문의 관리</a><a href="deploy.html">개발·배포 관리</a></nav><div class="actions"><button class="btn secondary" data-save-json>data.json 저장</button><button class="btn secondary" data-save-html>오늘 날짜 HTML 저장</button></div></div></header>
-<main class="container"><section class="kpis">
-<div class="kpi"><small>전체 처리 건수</small><strong id="totalCount">0</strong></div><div class="kpi"><small>문의 전체</small><strong id="inquiryCount">0</strong></div><div class="kpi"><small>개발·배포 전체</small><strong id="deployCount">0</strong></div><div class="kpi"><small>미완료 건수</small><strong id="pendingCount">0</strong></div>
-</section><section class="panel"><div class="panel-head"><h2>업무 관리 메뉴</h2><p>업무 유형을 선택하여 등록 내역을 관리하세요.</p></div><div class="menu-grid"><a class="menu-card" href="inquiry.html"><span>INQUIRY</span><h3>문의사항 관리</h3><p>문의병원, 문의자, 문의내용 및 처리 결과 관리</p><b id="inquiryLinkCount">0건 관리 중 →</b></a><a class="menu-card" href="deploy.html"><span>DEVELOPMENT & DEPLOY</span><h3>개발·배포 관리</h3><p>기존 개발 작업 및 배포 일정·소스 관리</p><b id="deployLinkCount">0건 관리 중 →</b></a></div></section>
-<section class="notice"><b>데이터 저장 안내</b><p>변경사항은 우선 브라우저에 저장됩니다. 상단의 data.json 저장을 눌러 파일로 내보내거나, JSON 파일 연결 기능을 이용해 연결된 파일에 변경사항을 반영할 수 있습니다.</p></section></main>
-<script src="common.js"></script><script>document.addEventListener('DOMContentLoaded',async()=>{const d=await Store.load();const q=d.inquiries.length,n=d.deployments.length;document.getElementById('totalCount').textContent=q+n;document.getElementById('inquiryCount').textContent=q;document.getElementById('deployCount').textContent=n;document.getElementById('pendingCount').textContent=d.inquiries.filter(x=>!x.completed).length+d.deployments.filter(x=>!(x.status==='deployed'||x.deployDate)).length;document.getElementById('inquiryLinkCount').textContent=q+'건 관리 중 →';document.getElementById('deployLinkCount').textContent=n+'건 관리 중 →';});</script></body></html>
+<header class="app-header">
+    <div class="header-inner">
+        <div class="brand">
+            <h1>업무 통합 관리</h1>
+            <!-- <span class="badge">LOCAL WORKSPACE</span> -->
+        </div>
+        <nav>
+            <a class="active" href="index.html">대시보드</a>
+            <a class="" href="pages/SaveInquiry.html">문의 관리</a>
+            <a class="" href="pages/SaveDeploy.html">개발·배포 관리</a>
+            <a class="" href="pages/SaveDataRequest.html">데이터 처리 요청</a>
+            <a href="pages/SaveCheckList.html">체크리스트</a>
+            <a class="" href="pages/SaveSetting.html">JSON 설정</a>
+        </nav>
+        <div class="actions"><button class="btn secondary" data-save-html>오늘 날짜 HTML 저장</button></div>
+    </div>
+</header>
+<main class="container">
+    <section class="page-intro">
+        <div>
+            <p class="eyebrow">WORKSPACE OVERVIEW</p>
+            <h2>업무 현황</h2>
+            <p>문의와 개발·배포 업무를 한 화면에서 확인합니다.</p>
+        </div>
+        <a class="btn secondary" href="/pages/SaveSetting.html">JSON 파일 설정 →</a>
+    </section>
+
+    <section class="kpis">
+        <div class="kpi"><small>전체 처리 건수</small><strong id="totalCount">0</strong></div>
+        <div class="kpi"><small>문의 전체</small><strong id="inquiryCount">0</strong></div>
+        <div class="kpi"><small>개발·배포 전체</small><strong id="deployCount">0</strong></div>
+        <div class="kpi"><small>병원 데이터 처리 요청</small><strong id="requestCount">0</strong></div>
+        <div class="kpi"><small>체크리스트</small><strong id="checklistCount">0</strong></div>
+        <div class="kpi"><small>미완료 건수</small><strong class="warning" id="pendingCount">0</strong></div>
+    </section>
+
+    <section class="dashboard-grid">
+        <article class="panel chart-panel"><div class="panel-head"><h2>업무 처리 현황</h2><p>완료 상태를 기준으로 집계합니다.</p></div><div class="donut-layout">
+            <div class="donut" id="completionDonut"><div><strong id="completionRate">0%</strong><small>전체 완료율</small></div></div>
+            <div class="chart-legend"><p><i class="legend-dot done-dot"></i>완료 <b id="doneTotal">0건</b></p><p><i class="legend-dot pending-dot"></i>미완료 <b id="pendingTotal">0건</b></p><p><i class="legend-dot hold-dot"></i>보류 <b id="holdTotal">0건</b></p></div>
+        </div></article>
+        <article class="panel chart-panel"><div class="panel-head"><h2>화면별 데이터 분포</h2><p>각 업무 화면에 등록된 전체 데이터</p></div><div class="distribution-list">
+            <div><span>문의 관리</span><b id="inquiryStat">0건</b><div class="bar-track"><i id="inquiryBar"></i></div></div>
+            <div><span>개발·배포 관리</span><b id="deployStat">0건</b><div class="bar-track"><i id="deployBar"></i></div></div>
+            <div><span>병원 데이터 처리 요청</span><b id="requestStat">0건</b><div class="bar-track"><i id="requestBar"></i></div></div>
+            <div><span>체크리스트</span><b id="checklistStat">0건</b><div class="bar-track"><i id="checklistBar"></i></div></div>
+        </div></article>
+    </section>
+    <section class="panel timestamp-panel"><div><p class="eyebrow">LAST DATA ACTIVITY</p><h2>최근 데이터 변경</h2><p>등록·수정 시각 기준으로 표시합니다.</p></div><div class="timestamp-value"><strong id="lastUpdated">기록 없음</strong><small id="lastUpdatedRelative">데이터가 변경되면 시각이 표시됩니다.</small></div></section>
+
+    <section class="panel">
+        <div class="panel-head">
+            <h2>업무 관리 메뉴</h2>
+            <p>업무 유형을 선택하여 등록 내역을 관리하세요.</p>
+        </div>
+        <div class="menu-grid">
+            <a class="menu-card" href="pages/SaveInquiry.html">
+                <span>INQUIRY</span>
+                <h3>문의사항 관리</h3>
+                <p>문의병원, 문의자, 문의내용 및 처리 결과 관리</p>
+                <b id="inquiryLinkCount">0건 관리 중 →</b>
+            </a>
+            <a class="menu-card" href="pages/SaveDeploy.html">
+                <span>DEVELOPMENT &amp; DEPLOY</span>
+                <h3>개발·배포 관리</h3>
+                <p>개발 작업, 배포 일정 및 변경 소스 관리</p>
+                <b id="deployLinkCount">0건 관리 중 →</b>
+            </a>
+            <a class="menu-card" href="pages/SaveDataRequest.html">
+                <span>HOSPITAL DATA REQUEST</span>
+                <h3>병원 데이터 처리 요청</h3>
+                <p>병원 사용자의 데이터 추출·정정·삭제·등록 요청 관리</p>
+                <b id="requestLinkCount">0건 관리 중 →</b>
+            </a>
+            <a class="menu-card" href="pages/SaveCheckList.html">
+                <span>RELEASE CHECKLIST</span>
+                <h3>개발 반영 체크리스트</h3>
+                <p>시작·종료·반영 일정과 개발기·스테이징·운영기 확인</p>
+                <b id="checklistLinkCount">0건 관리 중 →</b>
+            </a>
+        </div>
+    </section>
+
+    <section class="notice">
+        <strong>데이터 저장 안내</strong>
+        <p>문의, 개발·배포, 병원 데이터 처리 요청은 각각 별도 JSON 파일로 관리합니다. 파일 연결 및 불러오기·저장 설정은 JSON 설정 화면에서 관리할 수 있습니다.</p>
+    </section>
+</main>
+
+    <script src="biz/common.js"></script>
+    <script src="biz/index.js"></script>
+
+</body>
+</html>
