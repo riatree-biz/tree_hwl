@@ -1,2 +1,9 @@
 # data folder ignored
 data/
+
+
+# 전역 gitignore 파일 생성 및 규칙 추가
+echo "*:Zone.Identifier" >> ~/.gitignore_global
+
+# Git에 전역 설정 등록
+git config --global core.excludesfile ~/.gitignore_global
